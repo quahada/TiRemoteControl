@@ -105,19 +105,36 @@ MAKE_SYSTEM_PROP(REMOTE_CONTROL_END_SEEK_FORWARD,UIEventSubtypeRemoteControlEndS
 
 -(void)setNowPlayingInfo:(id)args
 {
+	NSLog(@"[INFO] %@ setNowPlayingInfo",self);
     ENSURE_SINGLE_ARG(args,NSDictionary);
     NSString *artist = [TiUtils stringValue:@"artist" properties:args def:@""];
     NSString *title = [TiUtils stringValue:@"title" properties:args def:@""];
     NSString *albumTitle = [TiUtils stringValue:@"albumTitle" properties:args def:@""];
+    //MPMediaItemArtwork *artwork = [song valueForProperty: MPMediaItemPropertyArtwork];
+    UIImage *musicImage = [UIImage imageNamed:[TiUtils stringValue:@"artwork" properties:args def:@""]];
+    MPMediaItemArtwork *artworkImage = [[MPMediaItemArtwork alloc] initWithImage:musicImage];
+
 
     Class playingInfoCenter = NSClassFromString(@"MPNowPlayingInfoCenter");
+    NSLog(@"[INFO] %@ setNowPlayingInfo 1",self);
     if (playingInfoCenter) {
+    	NSLog(@"[INFO] %@ setNowPlayingInfo 2",self);
         NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+        NSLog(@"[INFO] %@ setNowPlayingInfo 3",self);
         [songInfo setObject:artist forKey:MPMediaItemPropertyArtist];
         [songInfo setObject:title forKey:MPMediaItemPropertyTitle];
         [songInfo setObject:albumTitle forKey:MPMediaItemPropertyAlbumTitle];
-        [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:songInfo];
+        [songInfo setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
+        //artworkImage = [UIImage imageNamed:@"EmptyAlbum.png"];
+        NSLog(@"[INFO] %@ setNowPlayingInfo 4",self);
+        //[[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:songInfo];
+        NSLog(@"[INFO] %@ setNowPlayingInfo 5",self);
+    	MPNowPlayingInfoCenter *center = [MPNowPlayingInfoCenter defaultCenter];
+    	NSLog(@"[INFO] %@ setNowPlayingInfo 6",self);
+    	center.nowPlayingInfo = songInfo;
+    	NSLog(@"[INFO] %@ setNowPlayingInfo 7",self);
     }
+    NSLog(@"[INFO] %@ setNowPlayingInfo 8",self);
 }
 
 -(void)clearNowPlayingInfo:(id)args
